@@ -84,10 +84,10 @@ public class Assn1_13vms1 {
 					String rollAgain = keyboard.next();
 					keyboard.nextLine();
 					
-					if (rollAgain.tolower() == 'y')
+					if (rollAgain.toLowerCase() == "y")
 						return true;
 					
-					else if(rollAgain.tolower() == 'n')
+					else if(rollAgain.toLowerCase() == "n")
 						return false;
 					
 					else
