@@ -1,0 +1,107 @@
+import java.util.*;
+public class Assn1_13vms1 {
+
+	public static int rollDice(){
+
+		int diceNumber;
+		Random generator = new Random(System.currentTimeMillis());
+		diceNumber = generator.nextInt(6)+1;
+		return diceNumber;
+	}
+
+	public static int playerTurn(int playerGameSum){
+
+		int turnSum = 0;
+		boolean replay = false;
+
+		while(replay){
+			int[] diceRolls = new int[2];
+			String[] diceRollsWords = new String[2];
+
+			System.out.println("Player's Turn: ");
+
+			diceRolls[0] = rollDice();
+			diceRolls[1] = rollDice();
+
+			System.out.print("Player rolled ");
+
+			for (int i = 0; i<diceRolls.length;i++){
+
+				switch(diceRolls[i]){
+					case 1: diceRollsWords[i] = "one";
+							break;
+					case 2: diceRollsWords[i] = "two";
+							break;
+					case 3: diceRollsWords[i] = "three";
+							break;
+					case 4: diceRollsWords[i] = "four";
+							break;
+					case 5: diceRollsWords[i] = "five";
+							break;
+					case 6: diceRollsWords[i] = "six";
+							break;
+				}
+			}
+
+			System.out.println(diceRollsWords[0] + " + " + diceRollsWords[1]);
+			replay = dicePairEvents(diceRolls);
+		}
+
+
+		return playerGameSum;
+
+	}
+
+	public static boolean dicePairEvents(int[] diceRolls, int playerGameSum){
+		
+		Scanner keyboard = new Scanner(System.in);
+
+		int turnSum = 0;
+
+		if(diceRolls[0] == 1 && diceRolls[1] == 1){
+			playerGameSum = 0;
+			System.out.println("Your turn is over! Game sum is now zero!");
+			return false;
+		}
+
+		else if(diceRolls[0] == 1 || diceRolls[1] == 1){
+			turnSum = 0;
+			System.out.println("Your turn is over! Turn sum is now zero!");
+			return false;
+		}
+
+		else if(diceRolls[0] == diceRolls[1]){
+			System.out.println("You must roll again!");
+			return true;
+		}
+
+		else{
+			turnSum = diceRolls[0] + diceRolls[1];
+			playerGameSum = playerGameSum + turnSum;
+			System.out.println("Player's turn sum is: " + turnSum + "and game sum is: " + playerGameSum);
+			try{
+					System.out.println("Would you like to roll again? y or n");
+					String rollAgain = keyboard.next();
+					keyboard.nextLine();
+					
+					if (rollAgain.tolower() == 'y')
+						return true;
+					
+					else if(rollAgain.tolower() == 'n')
+						return false;
+					
+					else
+						System.out.println("Please enter one of the characters specified.");
+					
+					
+			}catch(InputMismatchException ex)
+		}
+
+	}
+
+	public static void main(String[] args) {
+
+
+	}
+
+}
