@@ -3,14 +3,23 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Assn1_13vms1_Copy {
-
+	
+	// This scanner object is used for all of the input in the program
+	// Currently thinking of using only System.in for efficiency
+	// Declared as an attribute so that the object does not have to be
+	// initialized in each method
 	static Scanner keyboard = new Scanner(System.in);
+	
+	// This random object is used to generate a random object based
+	// a seed that uses the millisecond of the current time.
+	// It is a class attribute so that the generator can be used 
+	// across each of the methods
 	static Random generator = new Random(System.currentTimeMillis());
-
+	
+	
 	public static int rollDice(){
 
 		int diceNumber;
-
 		diceNumber = generator.nextInt(6)+1;
 		return diceNumber;
 	}
@@ -19,9 +28,7 @@ public class Assn1_13vms1_Copy {
 		int[] diceRolls = new int[2];
 		String[] diceRollsWords = new String[2];
 
-
 		diceRolls[0] = rollDice();
-
 
 		System.out.print(currentRoller + " rolled ");
 
@@ -50,6 +57,38 @@ public class Assn1_13vms1_Copy {
 		return diceRolls;
 
 	}
+	
+	public static boolean rollAgain(boolean replay){
+		boolean incorrectInput = true;
+		do{
+			try{
+				System.out.println("Would you like to roll again? y or n");
+				char rollAgain = keyboard.nextLine().charAt(0);
+
+				if (rollAgain == 'y' || rollAgain == 'Y'){
+					replay = true;
+					incorrectInput = false;
+				}
+
+				else if(rollAgain == 'n' || rollAgain == 'N'){
+					replay = false;
+					incorrectInput = false;
+				}
+
+				else{
+					System.out.println("Please enter one of the characters specified.");
+					incorrectInput = true;
+				}
+
+			}catch(StringIndexOutOfBoundsException ex){
+				System.out.println("Please try again and enter one of the two provided options.");
+				incorrectInput = true;
+			}
+		}while(incorrectInput);
+		
+		return replay;
+		
+	}
 
 	public static int playerTurn(int playerGameSum){
 
@@ -67,7 +106,6 @@ public class Assn1_13vms1_Copy {
 			int[] diceRolls = printDiceRolls(currentRoller);
 			turnSum = diceRolls[0] + diceRolls[1];
 
-
 			diceEvent = dicePairEvents(diceRolls, turnSum, playerGameSum, diceEventsPrompt);
 
 			if(diceEvent == 1){
@@ -83,37 +121,12 @@ public class Assn1_13vms1_Copy {
 				replay = true;
 
 			else if (diceEvent == 4){
-				boolean incorrectInput = true;
-				do{
-					try{
-						System.out.println("Would you like to roll again? y or n");
-						char rollAgain = keyboard.nextLine().charAt(0);
-
-						if (rollAgain == 'y' || rollAgain == 'Y'){
-							replay = true;
-							incorrectInput = false;
-						}
-
-						else if(rollAgain == 'n' || rollAgain == 'N'){
-							replay = false;
-							incorrectInput = false;
-						}
-
-						else{
-							System.out.println("Please enter one of the characters specified.");
-							incorrectInput = true;
-						}
-
-
-					}catch(InputMismatchException ex){
-						System.out.println("The input you entered cannot be interpreted. Please try again.");
-						incorrectInput = true;
-					}
-				}while(incorrectInput);
+				replay = rollAgain(replay);
+				playerGameSum = playerGameSum + turnSum;
 			}
+
 		}
 
-		playerGameSum = playerGameSum + turnSum;
 		return playerGameSum;
 
 	}
@@ -127,28 +140,42 @@ public class Assn1_13vms1_Copy {
 		}
 
 		else if(diceRolls[0] == 1 || diceRolls[1] == 1){
-			System.out.println(diceEventsPrompt +" turn is over! Turn sum is now zero!");
+			System.out.println(diceEventsPrompt +" turn is over! Turn sum is now zero! Game sum is currently: " + playerGameSum);
 			return 2;
 		}
 
 		else if(diceRolls[0] == diceRolls[1]){
-			System.out.println(diceEventsPrompt +" turn sum is: " + turnSum + " and game sum is: " + playerGameSum);
+			System.out.println(diceEventsPrompt +" turn sum is: " + turnSum + " and game sum is: " + (playerGameSum + turnSum));
 			System.out.println("Roll again!");
 			return 3;
 		}
 
 		else{
-			System.out.println(diceEventsPrompt +" turn sum is: " + turnSum + " and game sum is: " + playerGameSum);
+			System.out.println(diceEventsPrompt +" turn sum is: " + turnSum + " and game sum is: " + (playerGameSum + turnSum));
 			return 4;
 		}
 
+	}
+	
+	public static boolean computerStrategy(int turnSum, int computerGameSum, boolean replay){
+	
+				//Computer Strategy to be decided
+				
+				if (computerGameSum > 80)
+					replay = false;
+			
+				else if (computerGameSum <= 80)
+					replay = true;
+	
+				return replay;
+	
 	}
 
 	public static int computerTurn(int computerGameSum){
 		int turnSum = 0;
 		boolean replay = true;
 		int diceEvent;
-		System.out.println("Please press <enter> to continue the game.");
+		System.out.println("\nPlease press <enter> to continue the game.");
 		keyboard.nextLine();
 
 		System.out.println("Computer's Turn: ");
@@ -158,8 +185,7 @@ public class Assn1_13vms1_Copy {
 		while(replay){
 
 			int[] diceRolls = printDiceRolls(currentRoller);
-			turnSum = diceRolls[0] + diceRolls[1];
-
+			turnSum = turnSum + diceRolls[0] + diceRolls[1];
 
 			diceEvent = dicePairEvents(diceRolls, turnSum, computerGameSum, diceEventsPrompt);
 
@@ -172,42 +198,52 @@ public class Assn1_13vms1_Copy {
 				turnSum = 0;
 				replay = false;
 			}
-			else if (diceEvent == 3)
+			else if (diceEvent == 3){
 				replay = true;
-
+				computerGameSum = computerGameSum + turnSum;
+			}
 			else if (diceEvent == 4){
-				boolean incorrectInput = true;
-				do{
-					try{
-						//Computer Strategy to be decided
-						incorrectInput = false;
-						replay = false;
-
-
-					}catch(InputMismatchException ex){
-						System.out.println("The input you entered cannot be interpreted. Please try again.");
-						incorrectInput = true;
-					}
-				}while(incorrectInput);
+				replay = computerStrategy(turnSum, computerGameSum, replay);
+				computerGameSum = computerGameSum + turnSum;
 			}
 		}
-
-		computerGameSum = computerGameSum + turnSum;
+		
 		return computerGameSum;
-
-
 	}
-
-	public static void main(String[] args) {
+	
+	public static void winningMessage(String message, int winningGameSum){
+		
+		System.out.println(message + "won the game with a final score of" + winningGameSum + " ! Congratulations!");
+		
+	}
+	
+	public static void playGame(){
 		int playerGameSum = 0;
 		int computerGameSum = 0;
 
-		while(playerGameSum <100 || computerGameSum <100){
+		while(playerGameSum <100 && computerGameSum <100){
 			playerGameSum = playerTurn(playerGameSum);
-			computerGameSum = computerTurn(computerGameSum);
+			
+			if(playerGameSum<100)
+				computerGameSum = computerTurn(computerGameSum);
 		}
+		
+		if (playerGameSum >= 100){
+			String message = "You ";
+			winningMessage(message, playerGameSum);
+		}
+		
+		else if (computerGameSum >= 100){
+			String message = " The Computer ";
+			winningMessage(message, computerGameSum);
+		}
+	}
+
+	public static void main(String[] args) {
+		playGame();
+		System.exit(0);
+		
 
 	}
 
 }
-
