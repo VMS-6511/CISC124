@@ -8,13 +8,13 @@ public class Assn1_13vms1_Copy {
 	// Currently thinking of using only System.in for efficiency
 	// Declared as an attribute so that the object does not have to be
 	// initialized in each method
-	static Scanner keyboard = new Scanner(System.in);
+	static final Scanner keyboard = new Scanner(System.in);
 	
 	// This random object is used to generate a random object based
 	// a seed that uses the millisecond of the current time.
 	// It is a class attribute so that the generator can be used 
 	// across each of the methods
-	static Random generator = new Random(System.currentTimeMillis());
+	static final Random generator = new Random(System.currentTimeMillis());
 	
 	
 	public static int rollDice(){
