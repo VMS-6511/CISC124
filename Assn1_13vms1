@@ -1,42 +1,40 @@
 import java.util.Random;
 import java.util.Scanner;
-/* LOOK AT THIS ISSUE: HOW TO DISPLAY CUMULATIVE TURN SUM AFTER ROLLING AGAIN WHJILE MAINTAINING ACCURATE GAME SUM*/
-public class Assn1_13vms1_Copy {
+/**/
+public class Assn1_13vms1 {
 	
 	// This scanner object is used for all of the input in the program
 	// Currently thinking of using only System.in for efficiency
 	// Declared as an attribute so that the object does not have to be
 	// initialized in each method
-	final static Scanner keyboard = new Scanner(System.in);
-	
+	final static Scanner KEYBOARD = new Scanner(System.in);
 	// This random object is used to generate a random object based
 	// a seed that uses the millisecond of the current time.
 	// It is a class attribute so that the generator can be used 
 	// across each of the methods
 	final static Random GENERATOR = new Random(System.currentTimeMillis());
 	
-	//This method creates a random integer from 1 to 6 inclusive that represents the rolling of the dice
+	//This method returns a random integer from 1 to 6 inclusive that represents the rolling of the dice.
+	// The assumptions made are that the dice only has numbers 1 to 6
+	// No parameters are required for the method
 	public static int rollDice(){
 		 return GENERATOR.nextInt(6)+1;
-	}
+	} // end rollDice method
 	
-	
+	// This method prints out the two numbers that the player rolled and takes in
+	// a parameter of String type that indicates who the current player is. This
+	// allows the method to be used for both the computer and the player.
+	// The assumptions made are that the rollDice() function will always output
+	// a number from 1 to 6. 
 	public static int[] printDiceRolls(String currentRoller){
-		
-		
 		int[] diceRolls = new int[2];
 		String[] diceRollsWords = new String[2];
-		
 		// Rolls the dice twice so that the player has two values
 		diceRolls[0] = rollDice();
 		diceRolls[1] = rollDice();
-
-		System.out.print(currentRoller + " rolled ");
-		
 		// Determines which numerical words need to be used to describe each of the dice rolls the player and computer
 		// received.
 		for (int i = 0; i < diceRolls.length;i++){
-
 			switch(diceRolls[i]){
 			case 1: diceRollsWords[i] = "one";
 					break;
@@ -52,14 +50,16 @@ public class Assn1_13vms1_Copy {
 					break;
 			}
 		}
-
-		
-		System.out.println(diceRollsWords[0] + " + " + diceRollsWords[1]);
+		System.out.println(currentRoller + " rolled " + diceRollsWords[0] + " + " + diceRollsWords[1]);
 		return diceRolls;
-
-	}
+	} // end printDiceRolls method
 	
-	// 
+	// This method takes four parameters which are the two numbers rolled by the player, the player's current
+	// sum for that turn and their sum for the entire game. Finally, it also takes a parameter that indicates
+	// who's current turn it is as a String so that the method can be used for both the player and the computer.
+	// The method produces the output for the four different possible events based on the numbers rolled by that player.
+	// It returns an integer based on the dice pair event so that the current turn sum and game sum of the player can
+	// be changed if needed. 
 	public static int dicePairEvents(int[] diceRolls, int turnSum, int playerGameSum, String diceEventsPrompt){
 
 		if(diceRolls[0] == 1 && diceRolls[1] == 1){
@@ -83,17 +83,25 @@ public class Assn1_13vms1_Copy {
 			return 4;
 		}
 
-	}
+	} // end dicePairEvents
 	
-	public static boolean rollAgain(boolean replay){
+	//This method is for returning the boolean to decide whether the player 
+	//would like to roll the dice again or pass to the next turn. 
+	//There are no parameters passed to the method.
+	public static boolean rollAgain(){
 		boolean incorrectInput = true;
+		boolean replay = true;
+		
+		// This do while loop takes care of the scenario where the user may input a letter
+		// that is not y or n or any other data type.
 		do{
+			// This try catch block is used to take care of the error that is caused in the case
+			// the user presses enter by accident instead of entering a letter. 
 			try{
 				System.out.println("Would you like to roll again? (y or n)");
-				char rollAgain = keyboard.nextLine().charAt(0);
+				char rollAgain = KEYBOARD.nextLine().charAt(0);
 
 				if (rollAgain == 'y' || rollAgain == 'Y'){
-					replay = true;
 					incorrectInput = false;
 				}
 				else if(rollAgain == 'n' || rollAgain == 'N'){
@@ -111,10 +119,13 @@ public class Assn1_13vms1_Copy {
 				}
 		}while(incorrectInput);
 		
-		return replay;
-		
-	}
+		return replay;	
+	} // end rollAgain method
 
+	// This method runs through the operations required for the user's turn in the game and
+	// returns the game sum after their turn so that it can accumulate over the course of the
+	// game. This need for accumulation across the turns is also why the game sum is passed
+	// as a parameter.
 	public static int playerTurn(int playerGameSum){
 		int turnSum = 0;
 		boolean replay = true;
@@ -123,12 +134,16 @@ public class Assn1_13vms1_Copy {
 		String currentRoller = "Player";
 		String diceEventsPrompt = "Your";
 		System.out.println("Player's Turn:\n");
-
+		//Loops until the player decides they do not want to roll again or if they roll
+		//a dice pair that results in a termination of their turn.
 		while(replay){
 			int[] diceRolls = printDiceRolls(currentRoller);
 			turnSum = diceRolls[0] + diceRolls[1];
 			totalturnSum = totalturnSum + turnSum;
 			diceEvent = dicePairEvents(diceRolls, totalturnSum, playerGameSum, diceEventsPrompt);
+			// These four if statements take the integer representing one of the four dice events
+			// from the event deciding method and alters the game sum, turn sum, and decides 
+			// whether the player is able to roll the dice again.
 			if(diceEvent == 1){
 				playerGameSum = 0;
 				totalturnSum = 0;
@@ -142,25 +157,29 @@ public class Assn1_13vms1_Copy {
 				replay = true;
 
 			else if (diceEvent == 4)
-				replay = rollAgain(replay);
+				replay = rollAgain();
 		}
 		return (playerGameSum+totalturnSum);
-	}
-
-	public static boolean computerStrategy(int turnSum, int computerGameSum, boolean replay){
-
-		//Computer Strategy to be decided
-
-		if (computerGameSum > 80)
+	} // end playerTurn method
+	
+	// This method is the computer's strategy for whether it will roll the dice again or not
+	// during it's turn. I have implemented a strategy where if their entire game sum is less
+	// than 80 and their current turn sum is less than 25, then they should roll again. Otherwise
+	// I said that the computer will decide to hold. Thus, it takes in two integer parameters:
+	// one being the computer's turn sum and the other being their game sum.
+	public static boolean computerStrategy(int turnSum, int computerGameSum){
+		boolean replay = false;
+		if (computerGameSum > 40 && turnSum > 20)
 			replay = false;
-
-		else if (computerGameSum <= 80)
+		else if (computerGameSum <= 40 && turnSum <= 20)
 			replay = true;
-
 		return replay;
-
-	}
-
+	} // end computerStrategy method
+	
+	// This method runs through the operations required for the computer's turn in the game and
+	// returns the game sum after their turn so that it can accumulate over the course of the
+	// game. This need for accumulation across the turns is also why the game sum is passed
+	// as a parameter.
 	public static int computerTurn(int computerGameSum){
 		int turnSum = 0;
 		boolean replay = true;
@@ -168,85 +187,105 @@ public class Assn1_13vms1_Copy {
 		int totalTurnSum = 0;
 		String currentRoller = "Computer";
 		String diceEventsPrompt = "Computer's";
-
 		System.out.println("Computer's Turn:");
 		
+		//Loops until the computer decides they do not want to roll again or if they roll
+		//a dice pair that results in a termination of their turn.
 		while(replay){
-			
 			System.out.print("\n");
 			int[] diceRolls = printDiceRolls(currentRoller);
 			turnSum =  diceRolls[0] + diceRolls[1];
 			totalTurnSum = totalTurnSum + turnSum;
 			diceEvent = dicePairEvents(diceRolls, totalTurnSum, computerGameSum, diceEventsPrompt);
-
 			if(diceEvent == 1){
 				computerGameSum = 0;
 				totalTurnSum = 0;
 				replay = false;
 			}
-
 			else if (diceEvent == 2){
 				totalTurnSum = 0;
 				replay = false;
 			}
 			else if (diceEvent == 3)
 				replay = true;
-				
 			else if (diceEvent == 4)
-				replay = computerStrategy(turnSum, computerGameSum, replay);
+				replay = computerStrategy(turnSum, computerGameSum);
 		}
 		return (computerGameSum + totalTurnSum);
-	}
+	} // end of computerTurn method
 	
+	// This method prints out the message indicating when someone has reached 100 and
+	// shows what their final score was compared to the loser of the game. The two
+	// parameters that must be taken are the playerGameSum and the computerGameSum so
+	// that the winner can be decided.
 	public static void winningMessage(int playerGameSum, int computerGameSum){
-		
 		if (playerGameSum >= 100)
 			System.out.println("You won the game with a final score of " + playerGameSum + " ! Congratulations!");
-	
 		else if (computerGameSum >= 100)
-			System.out.println("The computer won the game with a final score of " + computerGameSum + " ! Congratulations!");
-		
+			System.out.println("The computer won the game with a final score of " + computerGameSum + " ! Congratulations!");		
 	}
 	
-	public static void playGame(){
-		boolean playAgain = true;
+	// This method allows the user to decide whether they would like to restart the game
+	// once someone has one the first iteration of the game. No parameters are required and
+	// the method returns a boolean indicating whether the player would like to restart the game
+	// or not. 
+	public static boolean restartGame(){
+		boolean incorrectInput;
+		boolean restart = false;
 		
+		// This do while loop ensures that any errors that could arise from different
+		// user input are accounted for. If the user does not enter a letter other than
+		// the specified ones, they will be prompted to try entering another letter again. 
+		do{
+			System.out.println("Would you like to play again? (y or n)");
+			String Again = KEYBOARD.nextLine();
+			KEYBOARD.nextLine(); // This is needed to clear the keyboard buffer.
+			if(Again.toLowerCase().equals("y")){
+				restart = true;
+				incorrectInput = false;
+			}
+			else if(Again.toLowerCase().equals("n")){
+				incorrectInput = false;
+			}
+			else{
+				System.out.println("Please enter one of the specified characters.\n");
+				incorrectInput = true;
+			}
+		}while(incorrectInput);
+		return restart;
+	} // end of restartGame method
+	
+	// This method runs all of the required methods to run the entire game.
+	public static void playGame(){
+		//These three lines are just present indicate the start of the game to the user.
 		System.out.println("WELCOME TO THE GAME OF PIG!");
 		System.out.println("\nThe player will start the game first! Enjoy!\n");
 		System.out.println("---------------------------------------------------\n");
-		while(playAgain){
+		boolean restartGameDecision;
+		// This do while loop runs until the user decides they would like to stop playing the game.
+		do{
 			int playerGameSum = 0;
 			int computerGameSum = 0;
-		
+			
+			// This while loops executes until one of the players reaches a game sum of 100 or more.
 			while(playerGameSum <100 && computerGameSum <100){
 				playerGameSum = playerTurn(playerGameSum);
 				System.out.println("\nPlayer's sum is: " + playerGameSum +", Computer's sum is: " + computerGameSum +", Please press <enter> or any key to continue the game.");
-				keyboard.nextLine();
+				KEYBOARD.nextLine(); // clears the keyboard buffer and takes in enter press
 				if(playerGameSum<100)
 					computerGameSum = computerTurn(computerGameSum);
 					System.out.println("\nPlayer's sum is: " + playerGameSum +", Computer's sum is: " + computerGameSum +", Please press <enter> or any key to continue the game.");
-					keyboard.nextLine();
+					KEYBOARD.nextLine(); // clears the keyboard buffer and takes in enter press
 			}
-			
 			winningMessage(playerGameSum, computerGameSum);
-			System.out.println("Would you like to play again? (y or n)");
-			String Again = keyboard.next();
-			if(Again.toLowerCase().equals("y"))
-				playAgain = true;
-			else if(Again.toLowerCase().equals("n"))
-				playAgain = false;
-		}
-			
-	keyboard.close();
-		
-	}
-
+			restartGameDecision = restartGame();
+		}while(restartGameDecision);
+		KEYBOARD.close();// closes the scanner object
+	} // end of the playGame method
+	
+	// This method is the main and executes the program.
 	public static void main(String[] args) {
 		playGame();
-		System.exit(0);
-		
-
-	}
-
-}
-
+		System.exit(0); // closes the program after the user decides to stop playing
+	} // end of the main method
+} // end of Assn1_13vms1 class
