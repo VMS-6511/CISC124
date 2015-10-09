@@ -1,6 +1,13 @@
 import java.util.Random;
 import java.util.Scanner;
-/**/
+/* Name: Vinith Suriyakumar Student Number: 10137764 
+   This program follows the format of the Game of Pig. It consists
+   of a player and a computer. The game involves rolling two dice
+   whose sum are added each turn to a total sum until one of the
+   player's reaches a sum of 100. The player's always have the option
+   to roll again or hold after their first roll. There are also specific
+   dice events that result in a turn sum of 0, player game sum of 0 and
+   a roll again.*/
 public class Assn1_13vms1 {
 	
 	// This scanner object is used for all of the input in the program
@@ -130,7 +137,7 @@ public class Assn1_13vms1 {
 		int turnSum = 0;
 		boolean replay = true;
 		int diceEvent;
-		int totalturnSum = 0;
+		int totalTurnSum = 0;
 		String currentRoller = "Player";
 		String diceEventsPrompt = "Your";
 		System.out.println("Player's Turn:\n");
@@ -139,18 +146,18 @@ public class Assn1_13vms1 {
 		while(replay){
 			int[] diceRolls = printDiceRolls(currentRoller);
 			turnSum = diceRolls[0] + diceRolls[1];
-			totalturnSum = totalturnSum + turnSum;
-			diceEvent = dicePairEvents(diceRolls, totalturnSum, playerGameSum, diceEventsPrompt);
+			totalTurnSum = totalTurnSum + turnSum;
+			diceEvent = dicePairEvents(diceRolls, totalTurnSum, playerGameSum, diceEventsPrompt);
 			// These four if statements take the integer representing one of the four dice events
 			// from the event deciding method and alters the game sum, turn sum, and decides 
 			// whether the player is able to roll the dice again.
 			if(diceEvent == 1){
 				playerGameSum = 0;
-				totalturnSum = 0;
+				totalTurnSum = 0;
 				replay = false;
 			}
 			else if (diceEvent == 2){
-				totalturnSum = 0;
+				totalTurnSum = 0;
 				replay = false;
 			}
 			else if (diceEvent == 3)
@@ -159,12 +166,12 @@ public class Assn1_13vms1 {
 			else if (diceEvent == 4)
 				replay = rollAgain();
 		}
-		return (playerGameSum+totalturnSum);
+		return (playerGameSum+totalTurnSum);
 	} // end playerTurn method
 	
 	// This method is the computer's strategy for whether it will roll the dice again or not
 	// during it's turn. I have implemented a strategy where if their entire game sum is less
-	// than 80 and their current turn sum is less than 25, then they should roll again. Otherwise
+	// than 40 and their current turn sum is less than 20, then they should roll again. Otherwise
 	// I said that the computer will decide to hold. Thus, it takes in two integer parameters:
 	// one being the computer's turn sum and the other being their game sum.
 	public static boolean computerStrategy(int turnSum, int computerGameSum){
